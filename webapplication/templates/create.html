@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artikel-Editor</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='Uni_Passau-Logo.svg') }}">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <header class="bg-white border-b border-gray-200 px-6 py-3">
+    <div class="flex justify-between items-center">
+      <img src="{{ url_for('static', filename='Uni_Passau-Logo.svg') }}" alt="Uni Passau Logo" class="h-10">
+      <div class="flex items-center space-x-4">
+        <a href="{{ url_for('settings.instructions_page') }}" 
+           class="text-sm text-blue-600 hover:text-blue-800">
+          Anleitung
+        </a>
+        <a href="{{ url_for('settings.settings_page') }}" 
+           class="text-sm text-blue-600 hover:text-blue-800">
+          Einstellungen
+        </a>
+        <span class="text-sm text-gray-600">Willkommen, <strong>{{ username }}</strong></span>
+        <a href="{{ url_for('auth.logout') }}" 
+           class="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition">
+          Abmelden
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex h-[calc(100vh-60px)]">
+
+    <aside class="w-64 bg-white border-r border-gray-200 p-4 overflow-y-auto">
+      <button id="newChatBtn" class="w-full mb-4 bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded transition">
+        + Neuer Artikel
+      </button>
+      <h2 class="text-lg font-semibold mb-3">Artikel-History</h2>
+      <ul class="space-y-2 text-sm">
+      <ul id="historyList" class="space-y-2 text-sm">
+      </ul>
+    </aside>
+
+    <main id="mainContent" class="flex-1 flex flex-col items-center overflow-y-auto p-6 transition-all duration-300">
+      
+      <!-- Kein Artikel ausgewählt Overlay -->
+      <div id="noArticleOverlay" class="w-full max-w-4xl bg-white rounded-lg shadow p-12 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h2 class="text-xl font-semibold text-gray-700 mb-2">Kein Artikel ausgewählt</h2>
+        <p class="text-gray-500 mb-6">Wählen Sie einen bestehenden Artikel aus der History oder erstellen Sie einen neuen Artikel.</p>
+        <button id="createNewFromOverlay" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition font-medium">
+          + Neuen Artikel erstellen
+        </button>
+      </div>
+
+      <div id="articleEditor" class="w-full max-w-4xl bg-white rounded-lg shadow hidden">
+
+        <div class="flex border-b border-gray-200">
+          <button class="tab-btn active px-6 py-3 text-sm font-medium border-b-2 border-blue-600 text-blue-600 hover:text-blue-700" data-tab="stichpunkte">
+            Stichpunkte
+          </button>
+          <button class="tab-btn px-6 py-3 text-sm font-medium border-b-2 border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300" data-tab="artikel">
+            Artikel-Text
+          </button>
+          <button class="tab-btn px-6 py-3 text-sm font-medium border-b-2 border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300" data-tab="weitere">
+            Weitere Felder
+          </button>
+          <button class="tab-btn px-6 py-3 text-sm font-medium border-b-2 border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300" data-tab="uebersicht">
+            Übersicht
+          </button>
+        </div>
+
+        <div class="p-6">
+          
+          <div id="tab-stichpunkte" class="tab-content flex flex-col h-[calc(100vh-280px)]">
+            <div class="flex-1 flex flex-col mb-4">
+              <label class="block text-sm font-medium mb-1">Stichpunkte</label>
+              <textarea id="bulletpoints" class="flex-1 w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" placeholder="Geben Sie hier die Stichpunkte für Ihren Artikel ein..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <button id="generateTextBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition font-medium shadow-md">
+                Artikel-Text generieren
+              </button>
+              <button id="generateAllBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition font-medium shadow-md">
+                Alle Felder generieren
+              </button>
+            </div>
+          </div>
+
+          <div id="tab-artikel" class="tab-content hidden">
+            <div class="flex flex-col h-[calc(100vh-280px)]">
+              <label class="block text-sm font-medium mb-1">Artikel-Text</label>
+              <textarea id="text" class="flex-1 w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" placeholder="Der generierte Artikel-Text erscheint hier..."></textarea>
+              <div class="mt-2 flex space-x-2">
+                <button class="generieren-btn bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm rounded transition" data-field="text">
+                  Generieren
+                </button>
+                <button class="umschreiben-btn bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm rounded transition" data-field="text">
+                  Umschreiben
+                </button>
+                <button id="generateOtherFieldsBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm rounded transition">
+                  Weitere Felder generieren
+                </button>
+                <button id="shortenTextBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm rounded transition">
+                  Artikeltext kürzen
+                </button>
+                <button class="copy-btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 text-sm rounded transition" data-field="text">
+                  In die Zwischenablage kopieren
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-6 mb-4">
+              <label class="block text-sm font-medium mb-1">Zwischenüberschriften</label>
+              <textarea id="subheadings" rows="8" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" placeholder="Die generierten Zwischenüberschriften erscheinen hier..."></textarea>
+              <div class="mt-2 flex space-x-2">
+                <button id="generateSubheadingsBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm rounded transition">
+                  Zwischenüberschriften generieren
+                </button>
+                <button class="umschreiben-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded transition" data-field="subheadings">
+                  Umschreiben
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="tab-weitere" class="tab-content hidden">
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Dachzeile</label>
+              <input id="roofline" type="text" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Die generierte Dachzeile erscheint hier...">
+              <div class="mt-2 flex space-x-2">
+                <button class="generieren-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded transition" data-field="roofline">
+                  Generieren
+                </button>
+                <button class="umschreiben-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded transition" data-field="roofline">
+                  Umschreiben
+                </button>
+                <button class="copy-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded transition" data-field="roofline">
+                  In die Zwischenablage kopieren
+                </button>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Titel</label>
+              <textarea id="headline" rows="2" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" placeholder="Der generierte Titel erscheint hier..."></textarea>
+              <div class="mt-2 flex space-x-2">
+                <button class="generieren-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded transition" data-field="headline">
+                  Generieren
+                </button>
+                <button class="umschreiben-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded transition" data-field="headline">
+                  Umschreiben
+                </button>
+                <button class="copy-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded transition" data-field="headline">
+                  In die Zwischenablage kopieren
+                </button>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Untertitel</label>
+              <textarea id="subline" rows="4" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" placeholder="Der generierte Untertitel erscheint hier..."></textarea>
+              <div class="mt-2 flex space-x-2">
+                <button class="generieren-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded transition" data-field="subline">
+                  Generieren
+                </button>
+                <button class="umschreiben-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded transition" data-field="subline">
+                  Umschreiben
+                </button>
+                <button class="copy-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded transition" data-field="subline">
+                  In die Zwischenablage kopieren
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Paywall-Teaser</label>
+              <textarea id="teaser" rows="5" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" placeholder="Der generierte Teaser erscheint hier..."></textarea>
+              <div class="mt-2 flex space-x-2">
+                <button class="generieren-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded transition" data-field="teaser">
+                  Generieren
+                </button>
+                <button class="umschreiben-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded transition" data-field="teaser">
+                  Umschreiben
+                </button>
+                <button class="copy-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded transition" data-field="teaser">
+                  In die Zwischenablage kopieren
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Tags</label>
+              <textarea id="tags" rows="3" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" placeholder="Generierte Tags erscheinen hier..."></textarea>
+              <div class="mt-2 flex space-x-2">
+                <button class="generieren-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded transition" data-field="tags">
+                  Generieren
+                </button>
+                <button class="umschreiben-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded transition" data-field="tags">
+                  Umschreiben
+                </button>
+                <button class="copy-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded transition" data-field="tags">
+                  In die Zwischenablage kopieren
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="tab-uebersicht" class="tab-content hidden">
+            <div class="space-y-6">
+              <div class="border-b pb-4">
+                <h3 class="text-xs font-medium text-gray-500 uppercase mb-1">Dachzeile</h3>
+                <p id="preview-roofline" class="text-gray-800">—</p>
+                <div class="mt-2">
+                  <button class="copy-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded transition" data-field="roofline">
+                    In die Zwischenablage kopieren
+                  </button>
+                </div>
+              </div>
+
+              <div class="border-b pb-4">
+                <h3 class="text-xs font-medium text-gray-500 uppercase mb-1">Titel</h3>
+                <p id="preview-headline" class="text-xl font-bold text-gray-900">—</p>
+                <div class="mt-2">
+                  <button class="copy-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded transition" data-field="headline">
+                    In die Zwischenablage kopieren
+                  </button>
+                </div>
+              </div>
+
+              <div class="border-b pb-4">
+                <h3 class="text-xs font-medium text-gray-500 uppercase mb-1">Untertitel</h3>
+                <p id="preview-subline" class="text-lg text-gray-700">—</p>
+                <div class="mt-2">
+                  <button class="copy-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded transition" data-field="subline">
+                    In die Zwischenablage kopieren
+                  </button>
+                </div>
+              </div>
+
+              <div class="border-b pb-4">
+                <h3 class="text-xs font-medium text-gray-500 uppercase mb-1">Paywall-Teaser</h3>
+                <p id="preview-teaser" class="text-gray-600 italic">—</p>
+                <div class="mt-2">
+                  <button class="copy-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded transition" data-field="teaser">
+                    In die Zwischenablage kopieren
+                  </button>
+                </div>
+              </div>
+
+              <div class="border-b pb-4">
+                <h3 class="text-xs font-medium text-gray-500 uppercase mb-1">Tags</h3>
+                <p id="preview-tags" class="text-gray-600">—</p>
+                <div class="mt-2">
+                  <button class="copy-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm rounded transition" data-field="tags">
+                    In die Zwischenablage kopieren
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-xs font-medium text-gray-500 uppercase mb-1">Artikel-Text</h3>
+                <div id="preview-text" class="text-gray-800 whitespace-pre-wrap">—</div>
+                <div class="mt-3">
+                  <button class="copy-btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 text-sm rounded transition" data-field="text">
+                    In die Zwischenablage kopieren
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t flex justify-end">
+            <button id="saveBtn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition shadow">
+              Speichern
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <aside id="chatSidebar" class="w-[650px] bg-white border-l border-gray-200 p-4 overflow-y-auto fixed right-0 top-[60px] h-[calc(100vh-60px)] transform translate-x-full transition-transform duration-300 shadow-lg z-40">
+      <h2 class="text-lg font-semibold mb-3">KI</h2>
+      <div class="space-y-3 text-sm">
+      </div>
+    </aside>
+
+    <button id="chatToggle" class="fixed top-1/2 right-0 transform -translate-y-1/2 bg-blue-600 text-white rounded-l-lg px-2 py-2 hover:bg-blue-700 transition z-50">
+      < >
+    </button>
+
+  </div>
+
+  <div id="loadingOverlay" class="hidden fixed inset-0 z-[9999] flex flex-col items-center justify-center" style="background: rgba(0,0,0,0.45); pointer-events: all;">
+    <div class="bg-white rounded-2xl shadow-2xl px-10 py-8 flex flex-col items-center gap-4 min-w-[260px]">
+      <svg class="animate-spin h-12 w-12 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+      </svg>
+      <p id="loadingOverlayText" class="text-gray-700 font-medium text-base text-center">KI generiert…</p>
+    </div>
+  </div>
+
+  <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>

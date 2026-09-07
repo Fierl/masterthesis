@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anleitung – KI-Artikelgenerator</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='Uni_Passau-Logo.svg') }}">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .section { scroll-margin-top: 80px; }
+    body { font-size: 16px; line-height: 1.7; }
+    h1, h2, h3 { line-height: 1.3; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <header class="bg-white border-b border-gray-200 px-6 py-3 sticky top-0 z-50 shadow-sm">
+    <div class="flex justify-between items-center">
+      <img src="{{ url_for('static', filename='Uni_Passau-Logo.svg') }}" alt="Uni Passau Logo" class="h-10">
+      <div class="flex items-center space-x-4">
+        <a href="/" class="text-sm text-blue-600 hover:text-blue-800">&larr; Zurück zum Editor</a>
+        <span class="text-sm text-gray-600">Willkommen, <strong>{{ username }}</strong></span>
+        <a href="{{ url_for('auth.logout') }}"
+           class="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition">
+          Abmelden
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-3xl mx-auto py-12 px-6 space-y-16">
+
+    <div>
+      <h1 class="text-4xl font-bold mb-4">Anleitung</h1>
+      <p class="text-gray-600 text-lg">
+        Der KI-Artikelgenerator hilft Ihnen dabei, aus Stichpunkten fertige Artikel zu erstellen &ndash;
+        inklusive Überschriften, Teaser und Tags. Diese Anleitung führt Sie durch alle Bereiche
+        der Anwendung.
+      </p>
+    </div>
+
+    <nav>
+      <h2 class="text-xl font-semibold mb-3">Inhaltsverzeichnis</h2>
+      <ol class="space-y-1 text-blue-600 list-decimal list-inside text-base">
+        <li><a href="#abschnitt-navigation" class="hover:underline">Die Navigationsleiste</a></li>
+        <li><a href="#abschnitt-history" class="hover:underline">Die Artikel-History</a></li>
+        <li><a href="#abschnitt-tabs" class="hover:underline">Der Editor und seine Reiter</a></li>
+        <li><a href="#abschnitt-stichpunkte" class="hover:underline">Reiter: Stichpunkte</a></li>
+        <li><a href="#abschnitt-artikel" class="hover:underline">Reiter: Artikel-Text</a></li>
+        <li><a href="#abschnitt-weitere" class="hover:underline">Reiter: Weitere Felder</a></li>
+        <li><a href="#abschnitt-uebersicht" class="hover:underline">Reiter: Übersicht</a></li>
+        <li><a href="#abschnitt-chat" class="hover:underline">Das KI-Chat-Fenster</a></li>
+        <li><a href="#abschnitt-einstellungen" class="hover:underline">Die Einstellungen</a></li>
+      </ol>
+    </nav>
+
+    <hr class="border-gray-200">
+
+    <section id="abschnitt-navigation" class="section">
+      <h2 class="text-2xl font-bold mb-4">1. Die Navigationsleiste</h2>
+      <p class="text-gray-600 mb-6">
+        Am oberen Rand der Seite befindet sich die Navigationsleiste. Sie ist auf jeder Seite sichtbar
+        und bietet den schnellen Zugriff auf die wichtigsten Bereiche.
+      </p>
+
+      <div class="rounded-xl border border-gray-200 overflow-hidden shadow mb-6 bg-white">
+        <svg viewBox="0 0 700 64" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <rect width="700" height="64" fill="#ffffff"/>
+          <rect width="700" height="1" y="63" fill="#e5e7eb"/>
+          <rect x="16" y="12" width="80" height="40" rx="4" fill="#dbeafe"/>
+          <text x="56" y="37" text-anchor="middle" font-size="10" fill="#3b82f6" font-family="sans-serif" font-weight="600">Logo</text>
+          <text x="380" y="37" font-size="12" fill="#2563eb" font-family="sans-serif">Anleitung</text>
+          <text x="456" y="37" font-size="12" fill="#2563eb" font-family="sans-serif">Einstellungen</text>
+          <text x="552" y="37" font-size="12" fill="#374151" font-family="sans-serif">Willkommen, <tspan font-weight="bold">Test</tspan></text>
+          <rect x="651" y="21" width="36" height="22" rx="3" fill="#ef4444"/>
+          <text x="669" y="36" text-anchor="middle" font-size="10" fill="#ffffff" font-family="sans-serif">Abmelden</text>
+        </svg>
+      </div>
+
+      <p class="text-gray-600 mb-3">Die Leiste enthält von links nach rechts folgende Elemente:</p>
+      <ul class="space-y-3 text-gray-700">
+        <li><strong>Anleitung</strong> &ndash; Öffnet diese Hilfeseite.</li>
+        <li><strong>Einstellungen</strong> &ndash; Führt zur Seite, auf der Sie die KI-Prompts anpassen können.</li>
+        <li><strong>Abmelden</strong> &ndash; Beendet Ihre Sitzung und leitet Sie zur Anmeldeseite weiter.</li>
+      </ul>
+    </section>
+
+    <section id="abschnitt-history" class="section">
+      <h2 class="text-2xl font-bold mb-4">2. Die Artikel-History</h2>
+      <p class="text-gray-600 mb-6">
+        Auf der linken Seite des Editors befindet sich die Seitenleiste mit Ihrer Artikel-History.
+        Hier verwalten Sie alle Ihre Artikel.
+      </p>
+
+      <div class="rounded-xl border border-gray-200 overflow-hidden shadow mb-6 bg-white">
+        <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <rect width="700" height="220" fill="#f9fafb"/>
+          <rect width="200" height="220" fill="#ffffff"/>
+          <rect x="200" width="1" height="220" fill="#e5e7eb"/>
+          <rect x="12" y="12" width="176" height="36" rx="6" fill="#22c55e"/>
+          <text x="100" y="35" text-anchor="middle" font-size="13" fill="#ffffff" font-family="sans-serif" font-weight="600">+ Neuer Artikel</text>
+          <text x="12" y="72" font-size="12" fill="#374151" font-family="sans-serif" font-weight="700">Artikel-History</text>
+          <rect x="12" y="82" width="176" height="32" rx="4" fill="#eff6ff"/>
+          <text x="20" y="103" font-size="11" fill="#1d4ed8" font-family="sans-serif">Stadtrat und der neue Park</text>
+          <rect x="12" y="120" width="176" height="32" rx="4" fill="#eff6ff"/>
+          <text x="20" y="141" font-size="11" fill="#1d4ed8" font-family="sans-serif">Interview mit dem Buergermeister</text>
+          <rect x="12" y="158" width="176" height="32" rx="4" fill="#eff6ff"/>
+          <text x="20" y="179" font-size="11" fill="#1d4ed8" font-family="sans-serif">Haushaltsdebatte 2026</text>
+          <text x="430" y="115" text-anchor="middle" font-size="13" fill="#d1d5db" font-family="sans-serif">Editor-Bereich</text>
+        </svg>
+      </div>
+
+      <p class="text-gray-600 mb-3">Die Seitenleiste bietet zwei Funktionen:</p>
+      <ul class="space-y-3 text-gray-700">
+        <li>
+          <strong>Neuer Artikel</strong> &ndash; Legt einen neuen, leeren Artikel an und öffnet ihn sofort im Editor.
+          Wenn Sie bereits an einem Artikel arbeiten, wird dieser automatisch gespeichert, bevor der neue Artikel geöffnet wird.
+        </li>
+        <li>
+          <strong>Artikel-History</strong> &ndash; Listet alle Ihre bisher angelegten Artikel auf.
+          Ein Klick auf einen Eintrag öffnet den entsprechenden Artikel und lädt alle gespeicherten Felder in den Editor.
+        </li>
+      </ul>
+    </section>
+
+    <section id="abschnitt-tabs" class="section">
+      <h2 class="text-2xl font-bold mb-4">3. Der Editor und seine Reiter</h2>
+      <p class="text-gray-600 mb-6">
+        Sobald ein Artikel geöffnet ist, erscheint der eigentliche Editor. Er ist in vier Reiter aufgeteilt,
+        zwischen denen Sie jederzeit wechseln können, ohne dass Inhalte verloren gehen.
+      </p>
+
+      <div class="rounded-xl border border-gray-200 overflow-hidden shadow mb-6 bg-white">
+        <svg viewBox="0 0 700 80" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <rect width="700" height="80" fill="#ffffff"/>
+          <rect y="47" width="700" height="1" fill="#e5e7eb"/>
+          <text x="80" y="30" text-anchor="middle" font-size="13" fill="#2563eb" font-family="sans-serif" font-weight="600">Stichpunkte</text>
+          <rect x="0" y="45" width="160" height="3" fill="#2563eb"/>
+          <text x="255" y="30" text-anchor="middle" font-size="13" fill="#6b7280" font-family="sans-serif">Artikel-Text</text>
+          <text x="395" y="30" text-anchor="middle" font-size="13" fill="#6b7280" font-family="sans-serif">Weitere Felder</text>
+          <text x="525" y="30" text-anchor="middle" font-size="13" fill="#6b7280" font-family="sans-serif">Übersicht</text>
+          <rect x="163" y="8" width="1" height="32" fill="#e5e7eb"/>
+          <rect x="325" y="8" width="1" height="32" fill="#e5e7eb"/>
+          <rect x="463" y="8" width="1" height="32" fill="#e5e7eb"/>
+          <text x="350" y="68" text-anchor="middle" font-size="11" fill="#9ca3af" font-family="sans-serif">Der aktive Reiter ist blau unterstrichen</text>
+        </svg>
+      </div>
+
+      <p class="text-gray-600">
+        Der aktuell aktive Reiter ist blau unterstrichen. Klicken Sie auf einen anderen Reiternamen,
+        um zwischen den Bereichen zu wechseln. Eine sinnvolle Reihenfolge ist:
+        zuerst Stichpunkte eingeben, dann den Text generieren, anschließend die weiteren Felder befüllen
+        und zum Schluss in der Übersicht alles prüfen und kopieren.
+      </p>
+    </section>
+
+    <section id="abschnitt-stichpunkte" class="section">
+      <h2 class="text-2xl font-bold mb-4">4. Reiter: Stichpunkte</h2>
+      <p class="text-gray-600 mb-6">
+        In diesem Reiter tippen Sie Ihre Recherche-Ergebnisse als Stichpunkte
+        in das große Textfeld. Je detaillierter Ihre Stichpunkte, desto besser das Ergebnis.
+      </p>
+
+      <div class="rounded-xl border border-gray-200 overflow-hidden shadow mb-6 bg-white">
+        <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <rect width="700" height="220" fill="#ffffff"/>
+          <text x="16" y="24" font-size="12" fill="#374151" font-family="sans-serif" font-weight="600">Stichpunkte</text>
+          <rect x="16" y="32" width="668" height="140" rx="6" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.5"/>
+          <text x="28" y="56" font-size="11" fill="#6b7280" font-family="sans-serif">- Stadtrat beschliesst 3,2 Mio. Euro fuer neuen Park am Stadtrand</text>
+          <text x="28" y="74" font-size="11" fill="#6b7280" font-family="sans-serif">- Abstimmung: 18 Ja-Stimmen, 4 Nein-Stimmen</text>
+          <text x="28" y="92" font-size="11" fill="#6b7280" font-family="sans-serif">- Buergermeisterin Mueller: &quot;Ein wichtiges Signal fuer Lebensqualitaet&quot;</text>
+          <text x="28" y="110" font-size="11" fill="#6b7280" font-family="sans-serif">- Baubeginn geplant: Fruehjahr 2027</text>
+          <text x="28" y="128" font-size="11" fill="#6b7280" font-family="sans-serif">- Opposition kritisiert fehlende Buergerbeteiligung</text>
+          <rect x="16" y="187" width="198" height="24" rx="5" fill="#2563eb"/>
+          <text x="115" y="203" text-anchor="middle" font-size="11" fill="#ffffff" font-family="sans-serif" font-weight="500">Artikel-Text generieren</text>
+          <rect x="226" y="187" width="198" height="24" rx="5" fill="#2563eb"/>
+          <text x="325" y="203" text-anchor="middle" font-size="11" fill="#ffffff" font-family="sans-serif" font-weight="500">Alle Felder generieren</text>
+        </svg>
+      </div>
+
+      <p class="text-gray-600 mb-4">Unterhalb des Textfelds finden Sie zwei Schaltflächen:</p>
+      <ul class="space-y-4 text-gray-700">
+        <li>
+          <strong>Artikel-Text generieren</strong> &ndash; Die KI erstellt auf Basis Ihrer Stichpunkte ausschließlich
+          den Fließtext. Dachzeile, Titel, Untertitel und die anderen Felder bleiben unverändert. Das ist sinnvoll,
+          wenn Sie den Text zunächst einzeln prüfen und überarbeiten möchten.
+        </li>
+        <li>
+          <strong>Alle Felder generieren</strong> &ndash; Die KI befüllt in einem Schritt den Artikel-Text
+          <em>und</em> alle weiteren Felder (Dachzeile, Titel, Untertitel, Teaser, Tags).
+          Das ist der schnellste Weg zu einem vollständigen Entwurf.
+        </li>
+      </ul>
+    </section>
+
+    <section id="abschnitt-artikel" class="section">
+      <h2 class="text-2xl font-bold mb-4">5. Reiter: Artikel-Text</h2>
+      <p class="text-gray-600 mb-6">
+        Dieser Reiter zeigt den generierten Fließtext und die Zwischenüberschriften. Die KI nutzt diese Eingabe als alleinige Grundlage für alles, was sie
+        später generiert. Beide Bereiche können manuell bearbeitet und mit KI-Unterstützung überarbeitet werden.
+      </p>
+
+      <div class="rounded-xl border border-gray-200 overflow-hidden shadow mb-6 bg-white">
+        <svg viewBox="0 0 700 290" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <rect width="700" height="290" fill="#ffffff"/>
+          <text x="16" y="24" font-size="12" fill="#374151" font-family="sans-serif" font-weight="600">Artikel-Text</text>
+          <rect x="16" y="32" width="668" height="126" rx="6" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.5"/>
+          <text x="28" y="54" font-size="10" fill="#6b7280" font-family="sans-serif">Der Stadtrat hat in seiner gestrigen Sitzung mit deutlicher Mehrheit die Bereitstellung</text>
+          <text x="28" y="68" font-size="10" fill="#6b7280" font-family="sans-serif">von 3,2 Millionen Euro fuer die Anlage eines neuen Parks beschlossen. Achtzehn</text>
+          <text x="28" y="82" font-size="10" fill="#6b7280" font-family="sans-serif">Ratsmitglieder stimmten fuer das Projekt, vier dagegen. Buergermeisterin bezeichnete</text>
+          <text x="28" y="96" font-size="10" fill="#6b7280" font-family="sans-serif">die Entscheidung als wichtiges Signal. Baubeginn ist fuer Fruehjahr 2027 vorgesehen.</text>
+          <rect x="16" y="170" width="82" height="22" rx="4" fill="#2563eb"/>
+          <text x="57" y="185" text-anchor="middle" font-size="10" fill="#ffffff" font-family="sans-serif">Generieren</text>
+          <rect x="105" y="170" width="90" height="22" rx="4" fill="#2563eb"/>
+          <text x="150" y="185" text-anchor="middle" font-size="10" fill="#ffffff" font-family="sans-serif">Umschreiben</text>
+          <rect x="202" y="170" width="138" height="22" rx="4" fill="#2563eb"/>
+          <text x="271" y="185" text-anchor="middle" font-size="10" fill="#ffffff" font-family="sans-serif">Weitere Felder generieren</text>
+          <rect x="347" y="170" width="120" height="22" rx="4" fill="#2563eb"/>
+          <text x="407" y="185" text-anchor="middle" font-size="10" fill="#ffffff" font-family="sans-serif">Artikeltext kuerzen</text>
+          <rect x="474" y="170" width="160" height="22" rx="4" fill="#3b82f6"/>
+          <text x="554" y="185" text-anchor="middle" font-size="10" fill="#ffffff" font-family="sans-serif">In Zwischenablage kopieren</text>
+          <rect x="16" y="207" width="668" height="1" fill="#e5e7eb"/>
+          <text x="16" y="226" font-size="12" fill="#374151" font-family="sans-serif" font-weight="600">Zwischenueberschriften</text>
+          <rect x="16" y="234" width="668" height="30" rx="6" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.5"/>
+          <text x="28" y="254" font-size="10" fill="#6b7280" font-family="sans-serif">Stadtrat bewilligt Millionensumme | Buergermeisterin lobt | Opposition kritisiert</text>
+          <rect x="16" y="272" width="175" height="14" rx="3" fill="#2563eb" opacity="0.85"/>
+          <text x="103" y="283" text-anchor="middle" font-size="9" fill="#ffffff" font-family="sans-serif">Zwischenueberschriften generieren</text>
+          <rect x="198" y="272" width="80" height="14" rx="3" fill="#2563eb" opacity="0.85"/>
+          <text x="238" y="283" text-anchor="middle" font-size="9" fill="#ffffff" font-family="sans-serif">Umschreiben</text>
+        </svg>
+      </div>
+
+      <h3 class="text-lg font-semibold mt-6 mb-3">Schaltflächen für den Artikel-Text</h3>
+      <ul class="space-y-4 text-gray-700">
+        <li>
+          <strong>Generieren</strong> &ndash; Erstellt den Fließtext komplett neu auf Basis der Stichpunkte.
+          Ein vorhandener Text wird dabei überschrieben.
+        </li>
+        <li>
+          <strong>Umschreiben</strong> &ndash; Öffnet das KI-Chat-Fenster auf der rechten Seite. Dort können Sie
+          der KI Anweisungen geben, wie sie den vorhandenen Text verändern soll &ndash;
+          zum Beispiel &bdquo;Bitte kürzer formulieren&ldquo; oder &bdquo;Schreibe sachlicher&ldquo;.
+        </li>
+        <li>
+          <strong>Weitere Felder generieren</strong> &ndash; Befüllt alle anderen Felder (Dachzeile, Titel, Untertitel,
+          Teaser, Tags) anhand des bereits vorhandenen Artikel-Textes.
+          Sinnvoll, wenn Sie den Text zunächst manuell verfasst oder überarbeitet haben.
+        </li>
+        <li>
+          <strong>Artikeltext kürzen</strong> &ndash; Öffnet das KI-Chat-Fenster mit einer vorausgefüllten
+          Anfrage zum Kürzen des Textes. Sie können dort angeben, auf wie viele Wörter der Text
+          reduziert werden soll.
+        </li>
+        <li>
+          <strong>In die Zwischenablage kopieren</strong> &ndash; Kopiert den kompletten Artikel-Text,
+          sodass Sie ihn in ein anderes Programm einfügen können.
+        </li>
+      </ul>
+
+      <h3 class="text-lg font-semibold mt-6 mb-3">Schaltflächen für die Zwischenüberschriften</h3>
+      <ul class="space-y-3 text-gray-700">
+        <li>
+          <strong>Zwischenüberschriften generieren</strong> &ndash; Lässt die KI anhand des Artikel-Textes
+          passende Zwischenüberschriften vorschlagen.
+        </li>
+        <li>
+          <strong>Umschreiben</strong> &ndash; Öffnet das KI-Chat-Fenster gezielt für die Zwischenüberschriften.
+        </li>
+      </ul>
+    </section>
+
+    <section id="abschnitt-weitere" class="section">
+      <h2 class="text-2xl font-bold mb-4">6. Reiter: Weitere Felder</h2>
+      <p class="text-gray-600 mb-6">
+        Hier befinden sich fünf ergänzende Felder, die für die Veröffentlichung eines Artikels benötigt werden.
+        Jedes Feld funktioniert nach demselben Prinzip.
+      </p>
+
+      <div class="rounded-xl border border-gray-200 overflow-hidden shadow mb-6 bg-white">
+        <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <rect width="700" height="260" fill="#ffffff"/>
+          <text x="16" y="24" font-size="12" fill="#374151" font-family="sans-serif" font-weight="600">Dachzeile</text>
+          <rect x="16" y="30" width="668" height="28" rx="5" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.5"/>
+          <text x="28" y="49" font-size="11" fill="#6b7280" font-family="sans-serif">Stadtentwicklung</text>
+          <rect x="16" y="66" width="80" height="20" rx="4" fill="#2563eb"/>
+          <text x="56" y="80" text-anchor="middle" font-size="10" fill="#fff" font-family="sans-serif">Generieren</text>
+          <rect x="104" y="66" width="88" height="20" rx="4" fill="#2563eb"/>
+          <text x="148" y="80" text-anchor="middle" font-size="10" fill="#fff" font-family="sans-serif">Umschreiben</text>
+          <rect x="200" y="66" width="154" height="20" rx="4" fill="#3b82f6"/>
+          <text x="277" y="80" text-anchor="middle" font-size="10" fill="#fff" font-family="sans-serif">In Zwischenablage kopieren</text>
+          <rect x="16" y="98" width="668" height="1" fill="#f3f4f6"/>
+          <text x="16" y="118" font-size="12" fill="#374151" font-family="sans-serif" font-weight="600">Titel</text>
+          <rect x="16" y="124" width="668" height="42" rx="5" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.5"/>
+          <text x="28" y="143" font-size="11" fill="#6b7280" font-family="sans-serif">Stadtrat beschliesst Millionenbudget fuer Park-Neubau</text>
+          <rect x="16" y="174" width="80" height="20" rx="4" fill="#2563eb"/>
+          <text x="56" y="188" text-anchor="middle" font-size="10" fill="#fff" font-family="sans-serif">Generieren</text>
+          <rect x="104" y="174" width="88" height="20" rx="4" fill="#2563eb"/>
+          <text x="148" y="188" text-anchor="middle" font-size="10" fill="#fff" font-family="sans-serif">Umschreiben</text>
+          <rect x="200" y="174" width="154" height="20" rx="4" fill="#3b82f6"/>
+          <text x="277" y="188" text-anchor="middle" font-size="10" fill="#fff" font-family="sans-serif">In Zwischenablage kopieren</text>
+          <text x="350" y="236" text-anchor="middle" font-size="12" fill="#9ca3af" font-family="sans-serif">Untertitel, Paywall-Teaser und Tags funktionieren genauso</text>
+        </svg>
+      </div>
+
+      <p class="text-gray-600 mb-4">
+        Alle fünf Felder bieten dieselben drei Schaltflächen: <strong>Generieren</strong>, <strong>Umschreiben</strong>
+        und <strong>In die Zwischenablage kopieren</strong>. Deren Funktion entspricht der bereits beschriebenen
+        aus dem Reiter &bdquo;Artikel-Text&ldquo;.
+      </p>
+      <p class="text-gray-600 mb-4">Die Felder im Überblick:</p>
+      <dl class="space-y-3 text-gray-700">
+        <div>
+          <dt class="font-semibold">Dachzeile</dt>
+          <dd class="text-gray-600 mt-1">Eine kurze Zeile über der Hauptüberschrift, die das Thema oder den Ressort einordnet, zum Beispiel &bdquo;Stadtpolitik&ldquo; oder &bdquo;Wirtschaft&ldquo;.</dd>
+        </div>
+        <div>
+          <dt class="font-semibold">Titel</dt>
+          <dd class="text-gray-600 mt-1">Die Hauptüberschrift des Artikels. Sie sollte prägnant und aufmerksamkeitsstark sein.</dd>
+        </div>
+        <div>
+          <dt class="font-semibold">Untertitel</dt>
+          <dd class="text-gray-600 mt-1">Eine ergänzende Zeile unter dem Titel, die den wesentlichen Inhalt des Artikels zusammenfasst.</dd>
+        </div>
+        <div>
+          <dt class="font-semibold">Paywall-Teaser</dt>
+          <dd class="text-gray-600 mt-1">Ein kurzer Vorschautext, der Leserinnen und Leser zum Weiterlesen animieren soll. Er erscheint häufig hinter der Paywall-Grenze.</dd>
+        </div>
+        <div>
+          <dt class="font-semibold">Tags</dt>
+          <dd class="text-gray-600 mt-1">Schlagwörter, die den Artikel thematisch einordnen und die Auffindbarkeit auf der Website verbessern.</dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- 7. Uebersicht -->
+    <section id="abschnitt-uebersicht" class="section">
+      <h2 class="text-2xl font-bold mb-4">7. Reiter: Übersicht</h2>
+      <p class="text-gray-600 mb-6">
+        Der Reiter &bdquo;Übersicht&ldquo; ist kein Bearbeitungsbereich, sondern eine Leseansicht.
+        Hier werden alle generierten Felder untereinander angezeigt, sodass Sie den gesamten Artikel
+        auf einen Blick prüfen können.
+      </p>
+
+      <div class="rounded-xl border border-gray-200 overflow-hidden shadow mb-6 bg-white">
+        <svg viewBox="0 0 700 270" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <rect width="700" height="270" fill="#ffffff"/>
+          <text x="16" y="24" font-size="9" fill="#6b7280" font-family="sans-serif" font-weight="700" letter-spacing="1">DACHZEILE</text>
+          <text x="16" y="42" font-size="13" fill="#111827" font-family="sans-serif">Stadtentwicklung</text>
+          <rect x="16" y="54" width="668" height="1" fill="#f3f4f6"/>
+          <text x="16" y="72" font-size="9" fill="#6b7280" font-family="sans-serif" font-weight="700" letter-spacing="1">TITEL</text>
+          <text x="16" y="93" font-size="17" fill="#111827" font-family="sans-serif" font-weight="700">Stadtrat beschliesst Millionenbudget fuer Park-Neubau</text>
+          <rect x="16" y="104" width="668" height="1" fill="#f3f4f6"/>
+          <text x="16" y="122" font-size="9" fill="#6b7280" font-family="sans-serif" font-weight="700" letter-spacing="1">UNTERTITEL</text>
+          <text x="16" y="140" font-size="13" fill="#374151" font-family="sans-serif">Mit 18 zu 4 Stimmen votierte der Rat. Baubeginn: Fruehjahr 2027.</text>
+          <rect x="16" y="152" width="668" height="1" fill="#f3f4f6"/>
+          <rect x="16" y="162" width="154" height="20" rx="4" fill="#3b82f6"/>
+          <text x="93" y="176" text-anchor="middle" font-size="10" fill="#fff" font-family="sans-serif">In Zwischenablage kopieren</text>
+          <text x="350" y="210" text-anchor="middle" font-size="12" fill="#9ca3af" font-family="sans-serif">... weitere Felder in gleicher Darstellung ...</text>
+          <rect x="594" y="238" width="90" height="24" rx="5" fill="#16a34a"/>
+          <text x="639" y="254" text-anchor="middle" font-size="11" fill="#fff" font-family="sans-serif" font-weight="600">Speichern</text>
+        </svg>
+      </div>
+
+      <p class="text-gray-600 mb-4">
+        Neben jedem Feld finden Sie die Schaltfläche <strong>&bdquo;In die Zwischenablage kopieren&ldquo;</strong>,
+        damit Sie einzelne Inhalte schnell übernehmen können.
+      </p>
+      <p class="text-gray-600">
+        Der grüne <strong>&bdquo;Speichern&ldquo;</strong>-Button unten rechts ist auf allen vier Reitern sichtbar.
+        Er sichert alle Felder des aktuellen Artikels in der Datenbank.
+        Der Artikel wird außerdem automatisch gespeichert, wenn die KI Inhalte generiert &ndash;
+        Sie müssen also nicht nach jeder Generierung manuell speichern.
+      </p>
+    </section>
+
+    <!-- 8. Chat -->
+    <section id="abschnitt-chat" class="section">
+      <h2 class="text-2xl font-bold mb-4">8. Das KI-Chat-Fenster</h2>
+      <p class="text-gray-600 mb-6">
+        Das Chat-Fenster wird am rechten Rand des Bildschirms eingeblendet und ermöglicht eine
+        Konversation mit der KI zu einem bestimmten Feld. Es öffnet sich immer dann, wenn Sie
+        auf &bdquo;Umschreiben&ldquo; oder &bdquo;Artikeltext kürzen&ldquo; klicken.
+      </p>
+
+      <div class="rounded-xl border border-gray-200 overflow-hidden shadow mb-6 bg-white">
+        <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <rect width="700" height="300" fill="#f9fafb"/>
+          <text x="215" y="150" text-anchor="middle" font-size="13" fill="#d1d5db" font-family="sans-serif">Editor-Bereich</text>
+          <rect x="420" y="0" width="280" height="300" fill="#ffffff"/>
+          <rect x="420" y="0" width="1" height="300" fill="#e5e7eb"/>
+          <text x="436" y="26" font-size="13" fill="#111827" font-family="sans-serif" font-weight="700">KI – Titel</text>
+          <rect x="436" y="36" width="248" height="50" rx="6" fill="#eff6ff"/>
+          <text x="448" y="55" font-size="9.5" fill="#374151" font-family="sans-serif">Aktueller Text:</text>
+          <text x="448" y="69" font-size="9.5" fill="#374151" font-family="sans-serif">&quot;Stadtrat beschliesst Millionenbudget ...&quot;</text>
+          <text x="448" y="82" font-size="9" fill="#9ca3af" font-family="sans-serif">(wird automatisch mitgegeben)</text>
+          <rect x="476" y="98" width="208" height="30" rx="6" fill="#dbeafe"/>
+          <text x="488" y="117" font-size="9.5" fill="#1d4ed8" font-family="sans-serif">Bitte kuerzer und aktiver formulieren.</text>
+          <rect x="436" y="140" width="208" height="44" rx="6" fill="#f0fdf4"/>
+          <text x="448" y="158" font-size="9.5" fill="#166534" font-family="sans-serif">&quot;Stadtrat gibt gruenes Licht:</text>
+          <text x="448" y="172" font-size="9.5" fill="#166534" font-family="sans-serif">3,2 Mio. Euro fuer neuen Park&quot;</text>
+          <rect x="436" y="196" width="248" height="24" rx="5" fill="#16a34a"/>
+          <text x="560" y="212" text-anchor="middle" font-size="10" fill="#ffffff" font-family="sans-serif" font-weight="600">Übernehmen</text>
+          <rect x="436" y="234" width="196" height="28" rx="5" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.5"/>
+          <text x="448" y="252" font-size="9.5" fill="#9ca3af" font-family="sans-serif">Ihre Nachricht ...</text>
+          <rect x="640" y="234" width="44" height="28" rx="5" fill="#2563eb"/>
+          <text x="662" y="252" text-anchor="middle" font-size="10" fill="#ffffff" font-family="sans-serif">Senden</text>
+          <rect x="407" y="128" width="15" height="44" rx="4 0 0 4" fill="#2563eb"/>
+        </svg>
+      </div>
+
+      <p class="text-gray-600 mb-4">
+        Das Chat-Fenster lässt sich jederzeit über die <strong>blaue Schaltfläche am rechten Bildschirmrand</strong>
+        manuell öffnen und schließen. Wenn Sie außerhalb des Fensters klicken, schließt es sich automatisch.
+      </p>
+
+      <p class="text-gray-600 mb-4">Die Bedienung ist einfach:</p>
+      <ol class="list-decimal list-inside space-y-3 text-gray-700">
+        <li>
+          Klicken Sie auf <strong>&bdquo;Umschreiben&ldquo;</strong> bei einem beliebigen Feld. Das Chat-Fenster öffnet
+          sich und zeigt den aktuellen Inhalt des Feldes als Kontext an.
+        </li>
+        <li>
+          Tippen Sie Ihre Anweisung in das Eingabefeld am unteren Rand.
+        <li>Die KI überarbeitet den Text und zeigt das Ergebnis im Chat an.</li>
+        <li>
+          Gefällt Ihnen das Ergebnis, klicken Sie auf <strong>&bdquo;Übernehmen&ldquo;</strong> &ndash; der Inhalt wird
+          dann direkt in das entsprechende Feld im Editor eingetragen.
+        </li>
+      </ol>
+
+      <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-gray-700">
+        <strong>Hinweis:</strong> Das Chat-Fenster bezieht sich immer auf genau ein Feld. Der aktuelle
+        Feldinhalt wird der KI automatisch als Ausgangspunkt mitgegeben. Sie können im Verlauf mehrere
+        Überarbeitungen durchführen und jederzeit eine frühere Version aus dem Chat-Verlauf übernehmen.
+      </div>
+    </section>
+
+    <!-- 9. Einstellungen -->
+    <section id="abschnitt-einstellungen" class="section">
+      <h2 class="text-2xl font-bold mb-4">9. Die Einstellungen</h2>
+      <p class="text-gray-600 mb-6">
+        Hinter dem Link <strong>&bdquo;Einstellungen&ldquo;</strong> in der Navigationsleiste verbirgt sich die Seite
+        für die System-Prompt-Konfiguration. Hier können Sie das Verhalten der KI für jedes
+        Feld individuell anpassen.
+      </p>
+
+      <div class="rounded-xl border border-gray-200 overflow-hidden shadow mb-6 bg-white">
+        <svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <rect width="700" height="250" fill="#ffffff"/>
+          <text x="16" y="30" font-size="16" fill="#111827" font-family="sans-serif" font-weight="700">System-Prompt-Einstellungen</text>
+          <text x="16" y="48" font-size="11" fill="#6b7280" font-family="sans-serif">Fuer jedes Feld koennen Sie eigene Anweisungen ergaenzen.</text>
+          <rect x="16" y="62" width="668" height="162" rx="8" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1.5"/>
+          <text x="28" y="85" font-size="13" fill="#111827" font-family="sans-serif" font-weight="600">Dachzeile</text>
+          <text x="568" y="85" font-size="10" fill="#dc2626" font-family="sans-serif">Anweisungen loeschen</text>
+          <rect x="28" y="93" width="290" height="22" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+          <text x="40" y="108" font-size="10" fill="#6b7280" font-family="sans-serif">Standard-Prompt anzeigen</text>
+          <text x="28" y="132" font-size="11" fill="#374151" font-family="sans-serif" font-weight="600">Zusaetzliche Anweisungen</text>
+          <rect x="28" y="140" width="644" height="62" rx="5" fill="#ffffff" stroke="#d1d5db" stroke-width="1.5"/>
+          <text x="40" y="160" font-size="10" fill="#374151" font-family="sans-serif">Schreibe die Dachzeile immer als einzelnes Substantiv.</text>
+          <text x="40" y="176" font-size="10" fill="#9ca3af" font-family="sans-serif">Weitere Anweisungen hier eingeben ...</text>
+          <rect x="268" y="222" width="164" height="22" rx="5" fill="#2563eb"/>
+          <text x="350" y="237" text-anchor="middle" font-size="10" fill="#ffffff" font-family="sans-serif" font-weight="500">Alle Einstellungen speichern</text>
+        </svg>
+      </div>
+
+      <p class="text-gray-600 mb-4">
+        Für jedes Feld (Dachzeile, Titel, Untertitel usw.) gibt es einen vordefinierten
+        <strong>Standard-Prompt</strong>, der der KI erklärt, was sie tun soll. Diesen können Sie über
+        &bdquo;Standard-Prompt anzeigen&ldquo; einsehen.
+      </p>
+      <p class="text-gray-600 mb-4">
+        Im Feld <strong>&bdquo;Zusätzliche Anweisungen&ldquo;</strong> können Sie eigene Vorgaben ergänzen,
+        die an den Standard-Prompt angehängt werden. Damit lässt sich zum Beispiel ein
+        bevorzugter Schreibstil, eine Zielgruppe oder ein bestimmtes Format festlegen.
+        Diese Einstellungen gelten nur für Ihr Konto und beeinflussen alle zukünftigen Generierungen.
+      </p>
+      <p class="text-gray-600 mb-4">
+        Klicken Sie am Ende der Seite auf <strong>&bdquo;Alle Einstellungen speichern&ldquo;</strong>, um Ihre Anpassungen
+        dauerhaft zu sichern. Mit dem Link <strong>&bdquo;Anweisungen löschen&ldquo;</strong> rechts neben
+        einem Feldnamen entfernen Sie alle eigenen Ergänzungen für dieses Feld und kehren zur
+        Standard-Konfiguration zurück.
+      </p>
+    </section>
+
+    <hr class="border-gray-200">
+
+    <div class="text-center text-sm text-gray-400 pb-4">
+      KI-Artikelgenerator &mdash; Universität Passau
+    </div>
+
+  </div>
+</body>
+</html>

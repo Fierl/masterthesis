@@ -1,0 +1,184 @@
+<!-- templates/settings.html -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Einstellungen - System-Prompts</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='Uni_Passau-Logo.svg') }}">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <header class="bg-white border-b border-gray-200 px-6 py-3">
+    <div class="flex justify-between items-center">
+      <img src="{{ url_for('static', filename='Uni_Passau-Logo.svg') }}" alt="Uni Passau Logo" class="h-10">
+      <div class="flex items-center space-x-4">
+        <a href="/" class="text-sm text-blue-600 hover:text-blue-800">← Zurück zum Editor</a>
+        <a href="{{ url_for('settings.instructions_page') }}" class="text-sm text-blue-600 hover:text-blue-800">Anleitung</a>
+        <span class="text-sm text-gray-600">Willkommen, <strong>{{ username }}</strong></span>
+        <a href="{{ url_for('auth.logout') }}" 
+           class="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition">
+          Abmelden
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-6xl mx-auto py-8 px-6">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+      <h2 class="text-2xl font-bold mb-2">System-Prompt-Einstellungen</h2>
+      <p class="text-gray-600 mb-6">
+        Fügen Sie zusätzliche Anweisungen zu den Standard-Prompts hinzu. Die zusätzlichen Anweisungen werden an die Standard-Prompts angehängt.
+      </p>
+
+      <div id="loadingIndicator" class="text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <p class="mt-2 text-gray-600">Lade Einstellungen...</p>
+      </div>
+
+      <div id="settingsForm" class="hidden space-y-6">
+        <!-- Roofline -->
+        <div class="border rounded-lg p-4">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-semibold">Dachzeile</h3>
+            <button onclick="resetField('roofline')" class="text-sm text-red-600 hover:text-red-800">
+              Zusätzliche Anweisungen löschen
+            </button>
+          </div>
+          <details class="mb-3">
+            <summary class="cursor-pointer text-sm text-gray-600 hover:text-gray-800">Standard-Prompt anzeigen</summary>
+            <div class="mt-2 p-3 bg-gray-50 rounded text-sm whitespace-pre-wrap" id="default-roofline"></div>
+          </details>
+          <textarea id="custom-roofline" 
+                    class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm" 
+                    rows="8" 
+                    placeholder="Zusätzliche Anweisungen (werden zum Standard-Prompt hinzugefügt)"></textarea>
+        </div>
+
+        <!-- Headline -->
+        <div class="border rounded-lg p-4">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-semibold">Titel</h3>
+            <button onclick="resetField('headline')" class="text-sm text-red-600 hover:text-red-800">
+              Zusätzliche Anweisungen löschen
+            </button>
+          </div>
+          <details class="mb-3">
+            <summary class="cursor-pointer text-sm text-gray-600 hover:text-gray-800">Standard-Prompt anzeigen</summary>
+            <div class="mt-2 p-3 bg-gray-50 rounded text-sm whitespace-pre-wrap" id="default-headline"></div>
+          </details>
+          <textarea id="custom-headline" 
+                    class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm" 
+                    rows="8" 
+                    placeholder="Zusätzliche Anweisungen (werden zum Standard-Prompt hinzugefügt)"></textarea>
+        </div>
+
+        <!-- Subline -->
+        <div class="border rounded-lg p-4">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-semibold">Untertitel</h3>
+            <button onclick="resetField('subline')" class="text-sm text-red-600 hover:text-red-800">
+              Zusätzliche Anweisungen löschen
+            </button>
+          </div>
+          <details class="mb-3">
+            <summary class="cursor-pointer text-sm text-gray-600 hover:text-gray-800">Standard-Prompt anzeigen</summary>
+            <div class="mt-2 p-3 bg-gray-50 rounded text-sm whitespace-pre-wrap" id="default-subline"></div>
+          </details>
+          <textarea id="custom-subline" 
+                    class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm" 
+                    rows="8" 
+                    placeholder="Zusätzliche Anweisungen (werden zum Standard-Prompt hinzugefügt)"></textarea>
+        </div>
+
+        <!-- Teaser -->
+        <div class="border rounded-lg p-4">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-semibold">Paywall-Teaser</h3>
+            <button onclick="resetField('teaser')" class="text-sm text-red-600 hover:text-red-800">
+              Zusätzliche Anweisungen löschen
+            </button>
+          </div>
+          <details class="mb-3">
+            <summary class="cursor-pointer text-sm text-gray-600 hover:text-gray-800">Standard-Prompt anzeigen</summary>
+            <div class="mt-2 p-3 bg-gray-50 rounded text-sm whitespace-pre-wrap" id="default-teaser"></div>
+          </details>
+          <textarea id="custom-teaser" 
+                    class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm" 
+                    rows="8" 
+                    placeholder="Zusätzliche Anweisungen (werden zum Standard-Prompt hinzugefügt)"></textarea>
+        </div>
+
+        <!-- Text -->
+        <div class="border rounded-lg p-4">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-semibold">Text</h3>
+            <button onclick="resetField('text')" class="text-sm text-red-600 hover:text-red-800">
+              Zusätzliche Anweisungen löschen
+            </button>
+          </div>
+          <details class="mb-3">
+            <summary class="cursor-pointer text-sm text-gray-600 hover:text-gray-800">Standard-Prompt anzeigen</summary>
+            <div class="mt-2 p-3 bg-gray-50 rounded text-sm whitespace-pre-wrap" id="default-text"></div>
+          </details>
+          <textarea id="custom-text" 
+                    class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm" 
+                    rows="10" 
+                    placeholder="Zusätzliche Anweisungen (werden zum Standard-Prompt hinzugefügt)"></textarea>
+        </div>
+
+        <!-- Subheadings -->
+        <div class="border rounded-lg p-4">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-semibold">Zwischenüberschriften</h3>
+            <button onclick="resetField('subheadings')" class="text-sm text-red-600 hover:text-red-800">
+              Zusätzliche Anweisungen löschen
+            </button>
+          </div>
+          <details class="mb-3">
+            <summary class="cursor-pointer text-sm text-gray-600 hover:text-gray-800">Standard-Prompt anzeigen</summary>
+            <div class="mt-2 p-3 bg-gray-50 rounded text-sm whitespace-pre-wrap" id="default-subheadings"></div>
+          </details>
+          <textarea id="custom-subheadings" 
+                    class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm" 
+                    rows="10" 
+                    placeholder="Zusätzliche Anweisungen (werden zum Standard-Prompt hinzugefügt)"></textarea>
+        </div>
+
+        <!-- Tags -->
+        <div class="border rounded-lg p-4">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-semibold">Tags</h3>
+            <button onclick="resetField('tags')" class="text-sm text-red-600 hover:text-red-800">
+              Zusätzliche Anweisungen löschen
+            </button>
+          </div>
+          <details class="mb-3">
+            <summary class="cursor-pointer text-sm text-gray-600 hover:text-gray-800">Standard-Prompt anzeigen</summary>
+            <div class="mt-2 p-3 bg-gray-50 rounded text-sm whitespace-pre-wrap" id="default-tags"></div>
+          </details>
+          <textarea id="custom-tags" 
+                    class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm" 
+                    rows="8" 
+                    placeholder="Zusätzliche Anweisungen (werden zum Standard-Prompt hinzugefügt)"></textarea>
+        </div>
+
+        <!-- Save Button -->
+        <div class="flex justify-end space-x-4 pt-4">
+          <button id="saveBtn" 
+                  class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition font-medium">
+            Speichern
+          </button>
+        </div>
+
+        <!-- Status Messages -->
+        <div id="statusMessage" class="hidden mt-4"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+
+</body>
+</html>
