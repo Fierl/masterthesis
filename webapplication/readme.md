@@ -15,10 +15,6 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Then copy the configuration file:
-
-```powershell
-Copy-Item .env.example .env
-```
+Copy the configuration file.
 
 The specified PostgreSQL database must already exist. The tables are created automatically when the application starts.
