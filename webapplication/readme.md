@@ -1,8 +1,6 @@
-# Masterthesis
+# Webapplication
 
-## Starting the application
-
-### Requirements
+## Requirements
 
 - Python 3.11 or newer
 - PostgreSQL
