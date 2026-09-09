@@ -4,7 +4,7 @@ This repository contains the source code and analysis scripts for the master the
 
 ## Repository Structure
 
-- webapplication: Flask web application used for the user-facing part of the project.
+- webapplication: Flask web application used for the field study.
 - statistics: Data extraction, article matching, linguistic analysis and statistical evaluation.
 
 
